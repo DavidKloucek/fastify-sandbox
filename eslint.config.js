@@ -13,6 +13,6 @@ export default tseslint.config(
         },
     },
     {
-        ignores: ['dist/', 'temp/', 'ecosystem.config.cjs', 'eslint.config.js', 'index.ts', 'test/'],
+        ignores: ['dist/', 'temp/', 'ecosystem.config.cjs', 'eslint.config.js', 'index.ts', 'test/', 'src/generated/', 'openapi-ts.config.ts'],
     },
 );

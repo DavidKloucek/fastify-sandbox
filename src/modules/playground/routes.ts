@@ -4,6 +4,8 @@ import { withoutAuth } from '../../shared/schema.js';
 import { z } from 'zod'
 import { eventLoopUtilization, monitorEventLoopDelay } from 'node:perf_hooks';
 import process from 'node:process'
+import { createClient, createConfig } from '../../generated/face-api/client/index.js';
+import { representApiRepresentPost } from '../../generated/face-api/sdk.gen.js';
 
 const Reply200 = z.any()
 
@@ -107,5 +109,32 @@ export function registerPlaygroundRoutes(app: FastifyInstance) {
             monitorEventLoopDelay: monitorEventLoopDelay(),
             getActiveResourcesInfo: process.getActiveResourcesInfo(),
         }
+    })
+
+
+    route.get('/api-call', {
+        schema: {
+            tags: ['Playground'],
+            ...withoutAuth(),
+        }
+    }, async () => {
+
+        const imgReq = await fetch("https://www.gstatic.com/marketing-cms/assets/images/c6/46/5d17383f46948f1c05f43e1be21d/img-03.webp=e365-pa-nu-w400")
+        console.log(imgReq)
+
+        const file = await imgReq.blob();
+
+        const client = createClient(createConfig({
+            baseUrl: 'http://127.0.0.1:8055/',
+        }));
+
+        const { data } = await representApiRepresentPost({
+            client,
+            body: { file, detector_backend: 'mtcnn', model_name: 'ArcFace' },
+        });
+
+        console.log(data.length)
+
+        return data;
     })
 }
