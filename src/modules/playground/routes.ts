@@ -2,6 +2,8 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { withoutAuth } from '../../shared/schema.js';
 import { z } from 'zod'
+import { eventLoopUtilization, monitorEventLoopDelay } from 'node:perf_hooks';
+import process from 'node:process'
 
 const Reply200 = z.any()
 
@@ -93,4 +95,17 @@ export function registerPlaygroundRoutes(app: FastifyInstance) {
             products,
         }
     });
+
+    route.get('/stats', {
+        schema: {
+            tags: ['Playground'],
+            ...withoutAuth(),
+        }
+    }, () => {
+        return {
+            eventLoopUtilization: eventLoopUtilization(),
+            monitorEventLoopDelay: monitorEventLoopDelay(),
+            getActiveResourcesInfo: process.getActiveResourcesInfo(),
+        }
+    })
 }
