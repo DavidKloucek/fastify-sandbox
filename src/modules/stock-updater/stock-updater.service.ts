@@ -12,8 +12,8 @@ export class StockUpdater {
         if (!this.piscina) {
             this.piscina = new Piscina({
                 filename: resolveRelative(import.meta.url, "stock-updater.worker.js"),
-                idleTimeout: 60,
-                closeTimeout: 60,
+                idleTimeout: 60 * 1000,
+                closeTimeout: 30 * 1000,
                 minThreads: 0,
                 maxThreads: 2,
             })

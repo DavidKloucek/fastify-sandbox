@@ -17,8 +17,8 @@ export class ProductCardFactoryPool implements IProductReadModel {
         if (!this.piscina) {
             this.piscina = new Piscina({
                 filename: resolveRelative(import.meta.url, 'read.worker.js'),
-                idleTimeout: 60,
-                closeTimeout: 60,
+                idleTimeout: 60 * 1000,
+                closeTimeout: 30 * 1000,
                 maxThreads: 2,
                 minThreads: 0,
             });
