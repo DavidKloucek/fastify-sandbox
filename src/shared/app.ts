@@ -136,7 +136,7 @@ export async function bootstrap(port: number) {
         }
 
         app.log.error(error);
-        reply.status(500).send({ error: error.message });
+        reply.status(500).send({ error: "An error occured" });
     });
 
     app.addHook('onResponse', async request => {
