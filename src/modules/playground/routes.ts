@@ -137,10 +137,14 @@ export function registerPlaygroundRoutes(app: FastifyInstance) {
         const faceRepository = req.di.resolve('faceRepository')
 
         for (const reg of data) {
-            const q = await faceRepository.findSimilarFaces(reg.embedding, 'ArcFace', 'cosine', 0, 10)
+            const q = await faceRepository.findNearestByVector({
+                targetVector: reg.embedding,
+                metric: 'cosine',
+                limit: 10
+            })
 
             for (const item of q) {
-                console.log(item.face.filename, item.distance)
+                console.log(item.face.filename, item.face.model, item.distance)
             }
         }
 

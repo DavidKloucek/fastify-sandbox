@@ -4,14 +4,21 @@ import { raw } from '@mikro-orm/core';
 
 export class FaceRepository extends EntityRepository<FaceRegion> {
 
-    async findSimilarFaces(
+    async findNearestByVector({
+        targetVector,
+        metric,
+        model = 'ArcFace',
+        quality,
+        offset = 0,
+        limit,
+    }: {
         targetVector: number[],
-        model: 'ArcFace',
+        model?: 'ArcFace',
         metric: 'l2' | 'cosine',
-        offset: number = 0,
-        limit: number = 10,
-        quality: number | null = null,
-    ) {
+        quality?: number | null,
+        offset?: number,
+        limit?: number,
+    }) {
         const vectorLiteral = `[${targetVector.join(',')}]`;
         const column = 'emb_512'
 
@@ -36,7 +43,7 @@ export class FaceRepository extends EntityRepository<FaceRegion> {
 
         return rows.map(row => ({
             face: this.getEntityManager().map(FaceRegion, row),
-            distance: row.distance,
+            distance: Number(row.distance),
         }));
     }
 }
