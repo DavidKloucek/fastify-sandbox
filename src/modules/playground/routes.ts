@@ -117,10 +117,9 @@ export function registerPlaygroundRoutes(app: FastifyInstance) {
             tags: ['Playground'],
             ...withoutAuth(),
         }
-    }, async () => {
+    }, async (req) => {
 
-        const imgReq = await fetch("https://www.gstatic.com/marketing-cms/assets/images/c6/46/5d17383f46948f1c05f43e1be21d/img-03.webp=e365-pa-nu-w400")
-        console.log(imgReq)
+        const imgReq = await fetch("https://www.gstatic.com/marketing-cms/assets/images/c3/69/0cea77f34e4aa735f729734b327f/we-partner-img-1.webp")
 
         const file = await imgReq.blob();
 
@@ -133,7 +132,17 @@ export function registerPlaygroundRoutes(app: FastifyInstance) {
             body: { file, detector_backend: 'mtcnn', model_name: 'ArcFace' },
         });
 
-        console.log(data.length)
+        console.log("Regions", data.length)
+
+        const faceRepository = req.di.resolve('faceRepository')
+
+        for (const reg of data) {
+            const q = await faceRepository.findSimilarFaces(reg.embedding, 'ArcFace', 'cosine', 0, 10)
+
+            for (const item of q) {
+                console.log(item.face.filename, item.distance)
+            }
+        }
 
         return data;
     })

@@ -19,6 +19,8 @@ import { JobHandlerList } from '../modules/jobs/types.js';
 import { AdidasStockUpdater } from '../modules/stock-updater/adidas.updater.js';
 import { IPumaStockUpdater, PumaStockUpdater } from '../modules/stock-updater/puma.updater.js';
 import { StockUpdater } from '../modules/stock-updater/stock-updater.service.js';
+import { FaceRepository } from '../face/face.repository.js';
+import { FaceRegion } from '../face/face.entity.js';
 
 type TConfig = {
     exampleValue: boolean
@@ -27,6 +29,8 @@ type TConfig = {
 export interface Cradle {
     config: TConfig
     em: EntityManager;
+
+    faceRepository: FaceRepository;
 
     productCardDtoFactory: ProductCardDtoFactory;
     productCardWorkerPoolDtoFactory: ProductCardFactoryPool;
@@ -105,6 +109,7 @@ export async function initAppContainer() {
             new OrderCommandService(queue)
         ).singleton(),
 
+        faceRepository: asFunction(({ em }: Dependencies<"em">) => em.getRepository(FaceRegion)).singleton(),
         countryRepository: asFunction(({ em }: Dependencies<"em">) => em.getRepository(Country)).singleton(),
         countryFacade: asClass(CountryFacade).singleton(),
         userRepository: asFunction(({ em }: Dependencies<"em">) => em.getRepository(User)).singleton(),
