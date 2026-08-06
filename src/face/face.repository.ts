@@ -8,7 +8,7 @@ export class FaceRepository extends EntityRepository<FaceRegion> {
         targetVector,
         metric,
         model = 'ArcFace',
-        quality,
+        quality = null,
         offset = 0,
         limit,
     }: {
