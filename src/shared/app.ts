@@ -22,7 +22,9 @@ interface AppFastifySchema extends FastifySchema {
 export async function bootstrap(port: number) {
     const db = await initAppContainer();
 
-    const app = fastify();
+    const app = fastify({
+        logger: true
+    });
 
     await app.register(fastifyCors, {
         origin: process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:3000'],
@@ -114,19 +116,19 @@ export async function bootstrap(port: number) {
     });
 
     app.addHook('onRequest', async request => {
+        if (!request.headers.authorization) {
+            return
+        }
         try {
             const ret = await request.jwtVerify<{ id: number }>();
             request.user = await request.di.resolve("userRepository").findOneOrFail(ret.id);
-            console.log(request.user)
         } catch (e) {
-            console.error(e)
             app.log.error(e);
         }
-        console.log("DONE")
     });
 
     app.setErrorHandler((error: Error, request, reply) => {
-        console.log("CATCHED ERROR:", error);
+
         if (error instanceof AuthError) {
             return reply.status(401).send({ error: error.message });
         }
