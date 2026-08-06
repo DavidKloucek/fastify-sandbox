@@ -128,3 +128,9 @@ declare module 'fastify' {
         di: typeof appContainer
     }
 }
+
+declare module '@fastify/jwt' {
+    interface FastifyJWT {
+        user: User
+    }
+}

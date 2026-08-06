@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { SignInDto, LoginResponseDto, ErrorResponseDto, ProfileResponseDto } from './user.schema.js';
-import { User } from './user.entity.js';
 import { withAuth } from '../../shared/schema.js';
 
 export function registerUserRoutes(app: FastifyInstance) {
@@ -39,7 +38,7 @@ export function registerUserRoutes(app: FastifyInstance) {
             },
         },
     }, (request) => {
-        const user = request.user as User;
+        const user = request.user
         console.log(user)
         return { id: user.id, email: user.email };
     });
