@@ -8,14 +8,14 @@ export class FaceRepository extends EntityRepository<FaceRegion> {
         targetVector,
         metric,
         model = 'ArcFace',
-        quality = null,
+        quality,
         offset = 0,
         limit,
     }: {
         targetVector: number[],
-        model?: 'ArcFace',
         metric: 'l2' | 'cosine',
-        quality?: number | null,
+        model?: 'ArcFace',
+        quality?: number,
         offset?: number,
         limit?: number,
     }) {
@@ -31,7 +31,7 @@ export class FaceRepository extends EntityRepository<FaceRegion> {
             .addSelect(distanceExpr.as('distance'))
             .where({ model });
 
-        if (quality !== null) {
+        if (quality !== undefined) {
             qb.andWhere({ face_quality: quality });
         }
 
