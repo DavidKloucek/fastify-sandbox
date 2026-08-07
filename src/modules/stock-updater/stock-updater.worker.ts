@@ -9,13 +9,14 @@ export const Input = z.object({
 })
 export type Input = z.infer<typeof Input>
 
-let di: AwilixContainer<Cradle> | null = null
+let di: Promise<AwilixContainer<Cradle>> | undefined
 const getDi = async () => {
-    if (di !== null) {
-        return di;
+    if (di === undefined) {
+        di = (async () => {
+            await initAppContainer();
+            return appContainer.createScope()
+        })()
     }
-    await initAppContainer();
-    di = appContainer.createScope();
     return di
 }
 
